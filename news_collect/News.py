@@ -64,5 +64,27 @@ class News:
             'summary': self.summary
         })
 
+    def to_dict(self):
+        """
+        Return dict object of news content
+
+        Args
+        ====
+            None
+
+        Return
+        ======
+            Dictionary of news
+        """
+        return {
+            'media': self.media,
+            'title': self.title,
+            'author': self.author,
+            'category': self.category,
+            'url': self.url,
+            'datetime': self.datetime,
+            'summary': self.summary
+        }
+
     def __str__(self):
         return self.to_json()

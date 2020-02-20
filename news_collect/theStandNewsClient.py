@@ -42,20 +42,25 @@ class theStandNewsClient:
                 html_content = file.read()
                 return html_content
     
-    def get_article_list(self, url = 'https://www.thestandnews.com/'):
+    def get_article_list(self, url = 'https://www.thestandnews.com/', 
+                         default_cat = None):
         """
         Get the list of News object extract from news directory
 
         Args
         ====
             url: The url of news directory
+            default_cat: The default category name
         
         Return
         ======
             List of News Object
         """
-        news_dir = self.__get_html_file(url)
-        soup = BeautifulSoup(news_index, 'lxml')
+        try:
+            news_page = self.__get_html_file(url)
+        except Exception as e:
+            print(e)
+        soup = BeautifulSoup(news_page, 'lxml')
         
         # Fulfill menu first
         if self.menu_items is None:
@@ -96,7 +101,7 @@ class theStandNewsClient:
                         'The Stand News',
                         title_obj[0].string,
                         author[0].string.strip(),
-                        cat[0].string,
+                        cat[0].string if len(cat) > 0 else default_cat,
                         title_obj[0]['href'],
                         d[0].string.split('—'),
                         summary[0].string.strip(),
@@ -104,7 +109,7 @@ class theStandNewsClient:
                     )
                     news_list.append(news_item)
             except:
-                print(x)
+                print(items)
                 break
             
                 
