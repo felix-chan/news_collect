@@ -131,3 +131,7 @@ dmypy.json
 # VS code
 .vscode/
 notebooks/*
+
+# Saved news
+content/*
+directory/*

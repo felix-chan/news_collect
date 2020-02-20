@@ -10,7 +10,7 @@ import json
 from dateutil import parser
 import re
 from bs4 import BeautifulSoup
-from News import News
+from .News import News
 
 class theStandNewsClient:
     
