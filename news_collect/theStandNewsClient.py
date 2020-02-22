@@ -134,7 +134,7 @@ class theStandNewsClient:
                 b = dt_obj[1].strip()
             )
         else:
-            dt_text = dt_obj
+            dt_text = dt_obj if type(dt_obj) == str else str(dt_obj)
         
         return datetime.strptime(dt_text, '%Y/%m/%d %H:%M')
     
@@ -155,7 +155,12 @@ class theStandNewsClient:
         
         soup = BeautifulSoup(news_content, 'lxml')
         
-        author = soup.select('h4 a[rel=author]')[0]
+        author = soup.select('h4 a[rel=author]')
+        if len(author) > 0:
+            author = author[0]
+        else:
+            author = soup.select('h4')
+            author = author[0] if len(author) > 0 else None
         title = soup.select('h1')[0]
         dt = soup.select('article .date')[0]
         article = soup.select('article .article-content')
@@ -170,7 +175,7 @@ class theStandNewsClient:
             author.string.strip(),
             cat,
             url,
-            dt.string.split('—'),
+            dt.string.replace('-', '—').split('—'),
             contents.strip(),
             self._standnews_dt
         )
