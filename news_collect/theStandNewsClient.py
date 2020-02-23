@@ -56,61 +56,63 @@ class theStandNewsClient:
         ======
             List of News Object
         """
+        load_page = False
+        news_list = []
         try:
             news_page = self.__get_html_file(url)
+            load_page = True
         except Exception as e:
-            print(e)
-        soup = BeautifulSoup(news_page, 'lxml')
-        
-        # Fulfill menu first
-        if self.menu_items is None:
-            menu = soup.select('.menu-list li a')
-            menu_items = []
-            appended_items = []
-            for m_items in menu:
-                if m_items['href'].find('thestandnews.com') == -1:
-                    link = 'https://thestandnews.com{link}'.format(
-                        link = m_items['href']
-                    )
-                else:
-                    link = m_items['href']
-                
-                if (not link in appended_items) \
-                    and (m_items.string is not None):
-                    menu_items.append({
-                        'category': m_items.string,
-                        'link': link
-                    })
-                    appended_items.append(link)
-                
-            self.menu_items = menu_items
+                print(e)
+
+        if load_page:
+            soup = BeautifulSoup(news_page, 'lxml')
             
-        
-        news_list = []
-        
-        # Get the article list
-        for items in soup.select("div.article-block"):
-            try:
-                title_obj = items.select('h3 a')
-                summary = items.select('p.desc')
-                author = items.select('.author a')
-                cat = items.select('span.category-title')
-                d = items.select('span.date')
-                if len(title_obj) > 0:
-                    news_item = News(
-                        'The Stand News',
-                        title_obj[0].string,
-                        author[0].string.strip(),
-                        cat[0].string if len(cat) > 0 else default_cat,
-                        title_obj[0]['href'],
-                        d[0].string.split('—'),
-                        summary[0].string.strip(),
-                        self._standnews_dt
-                    )
-                    news_list.append(news_item)
-            except:
-                print(items)
-                break
+            # Fulfill menu first
+            if self.menu_items is None:
+                menu = soup.select('.menu-list li a')
+                menu_items = []
+                appended_items = []
+                for m_items in menu:
+                    if m_items['href'].find('thestandnews.com') == -1:
+                        link = 'https://thestandnews.com{link}'.format(
+                            link = m_items['href']
+                        )
+                    else:
+                        link = m_items['href']
+                    
+                    if (not link in appended_items) \
+                        and (m_items.string is not None):
+                        menu_items.append({
+                            'category': m_items.string,
+                            'link': link
+                        })
+                        appended_items.append(link)
+                    
+                self.menu_items = menu_items
+            
+            # Get the article list
+            for items in soup.select("div.article-block"):
+                try:
+                    title_obj = items.select('h3 a')
+                    summary = items.select('p.desc')
+                    author = items.select('.author a')
+                    cat = items.select('span.category-title')
+                    d = items.select('span.date')
+                    if len(title_obj) > 0:
+                        news_item = News(
+                            'The Stand News',
+                            title_obj[0].string,
+                            author[0].string.strip(),
+                            cat[0].string if len(cat) > 0 else default_cat,
+                            title_obj[0]['href'],
+                            d[0].string.split('—'),
+                            summary[0].string.strip(),
+                            self._standnews_dt
+                        )
+                        news_list.append(news_item)
+                except:
+                    print(items)
+                    break
             
                 
         return news_list

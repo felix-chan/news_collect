@@ -61,7 +61,7 @@ if __name__ == "__main__":
             temp_content = stand_news.get_article_list(items['link'], items["category"])
             save_content(temp_content)
             
-            time.sleep(5)
+            time.sleep(10)
     else:
         print('Skip directory')
 
