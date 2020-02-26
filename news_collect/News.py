@@ -38,7 +38,7 @@ class News:
         self.summary = summary
         
         if datetime_fun is None:
-            self.datetime = parser.parse('2019-02-03 12:33:12')
+            self.datetime = parser.parse(datetime_text)
         else:
             self.datetime = datetime_fun(datetime_text)
             
