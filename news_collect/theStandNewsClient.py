@@ -186,3 +186,5 @@ class theStandNewsClient:
         except Exception as e:
             print(f'Reading {url} with error')
             print(e)
+
+            return None

@@ -91,11 +91,12 @@ if __name__ == "__main__":
                             transform_url(old_info['url']), 
                             old_info['category']
                         )
-
-                        if not os.path.exists(f'./content/{dt}'):
-                            os.makedirs(f'./content/{dt}')
-                        with open(f'./content/{dt}/{file_name}', 'w') as file:
-                            file.write(article_detail.to_json())
+                        
+                        if article_detail:
+                            if not os.path.exists(f'./content/{dt}'):
+                                os.makedirs(f'./content/{dt}')
+                            with open(f'./content/{dt}/{file_name}', 'w') as file:
+                                file.write(article_detail.to_json())
 
                         time.sleep(15)
     else:
