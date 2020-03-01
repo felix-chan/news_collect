@@ -153,31 +153,36 @@ class theStandNewsClient:
         ======
             News Object
         """
-        news_content = self.__get_html_file(url)
-        
-        soup = BeautifulSoup(news_content, 'lxml')
-        
-        author = soup.select('h4 a[rel=author]')
-        if len(author) > 0:
-            author = author[0]
-        else:
-            author = soup.select('h4')
-            author = author[0] if len(author) > 0 else None
-        title = soup.select('h1')[0]
-        dt = soup.select('article .date')[0]
-        article = soup.select('article .article-content')
-        contents = BeautifulSoup(
-            re.sub('<script[^>]*>[^<]*</script>', '', str(article[0]))
-                .replace('</p>', '</p>\n'), 
-            'lxml').text
-        
-        return News(
-            'The Stand News',
-            title.string.strip(),
-            author.string.strip(),
-            cat,
-            url,
-            dt.string.replace('-', '—').split('—'),
-            contents.strip(),
-            self._standnews_dt
-        )
+
+        try:
+            news_content = self.__get_html_file(url)
+            
+            soup = BeautifulSoup(news_content, 'lxml')
+            
+            author = soup.select('h4 a[rel=author]')
+            if len(author) > 0:
+                author = author[0]
+            else:
+                author = soup.select('h4')
+                author = author[0] if len(author) > 0 else None
+            title = soup.select('h1')[0]
+            dt = soup.select('article .date')[0]
+            article = soup.select('article .article-content')
+            contents = BeautifulSoup(
+                re.sub('<script[^>]*>[^<]*</script>', '', str(article[0]))
+                    .replace('</p>', '</p>\n'), 
+                'lxml').text
+            
+            return News(
+                'The Stand News',
+                title.string.strip(),
+                author.string.strip(),
+                cat,
+                url,
+                dt.string.replace('-', '—').split('—'),
+                contents.strip(),
+                self._standnews_dt
+            )
+        except Exception as e:
+            print(f'Reading {url} with error')
+            print(e)
