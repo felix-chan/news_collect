@@ -92,24 +92,27 @@ if __name__ == "__main__":
         if len(time_list) > 0:
             for dt in time_list:
                 print(f'Running for {dt}')
-                file_list = os.listdir(f'./mp/directory/{dt}')
-                for file_name in file_list:
-                    if not os.path.isfile(f'./mp/content/{dt}/{file_name}'):
-                        with open(f'./mp/directory/{dt}/{file_name}', 'r') as file:
-                            old_info = json.loads(file.read())
+                if os.path.exists(f'./mp/directory/{dt}'):
+                    file_list = os.listdir(f'./mp/directory/{dt}')
+                    for file_name in file_list:
+                        if not os.path.isfile(f'./mp/content/{dt}/{file_name}'):
+                            with open(f'./mp/directory/{dt}/{file_name}', 'r') as file:
+                                old_info = json.loads(file.read())
 
-                        article_detail = mp_news.get_article_detail(
-                            transform_url(old_info['url']), 
-                            old_info['category']
-                        )
-                        
-                        if article_detail:
-                            if not os.path.exists(f'./mp/content/{dt}'):
-                                os.makedirs(f'./mp/content/{dt}')
-                            with open(f'./mp/content/{dt}/{file_name}', 'w') as file:
-                                file.write(article_detail.to_json())
+                            article_detail = mp_news.get_article_detail(
+                                transform_url(old_info['url']), 
+                                old_info['category']
+                            )
+                            
+                            if article_detail:
+                                if not os.path.exists(f'./mp/content/{dt}'):
+                                    os.makedirs(f'./mp/content/{dt}')
+                                with open(f'./mp/content/{dt}/{file_name}', 'w') as file:
+                                    file.write(article_detail.to_json())
 
-                        time.sleep(15)
+                            time.sleep(15)
+                else:
+                    print(f'Path {dt} does not exists')
     else:
         print('Skip news content')
 
