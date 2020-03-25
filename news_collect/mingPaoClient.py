@@ -12,6 +12,7 @@ import re
 from bs4 import BeautifulSoup
 from .News import News
 from urllib.parse import unquote
+import logging
 
 class mingPaoClient:
     
@@ -73,7 +74,7 @@ class mingPaoClient:
             news_page = self.__get_html_file(url)
             load_page = True
         except Exception as e:
-                print(e)
+                logging.error(e)
 
         if load_page:
             soup = BeautifulSoup(news_page, 'lxml')
@@ -99,7 +100,7 @@ class mingPaoClient:
                     )
                     news_list.append(news_item)
                 except:
-                    print(items)
+                    logging.error(items)
                     pass
         return news_list
 
@@ -121,7 +122,7 @@ class mingPaoClient:
             news_page = self.__get_html_file(url)
             load_page = True
         except Exception as e:
-                print(e)
+                logging.error(e)
 
         if load_page:
             soup = BeautifulSoup(news_page, 'lxml')
@@ -146,7 +147,7 @@ class mingPaoClient:
                         )
                         news_list.append(news_item)
                     except:
-                        print(link)
+                        logging.warning(f'Fail to get the news URL: {link}')
                         pass
         
         return news_list
@@ -179,7 +180,7 @@ class mingPaoClient:
                             int(t1.group('min')),
                             int(t1.group('second')))
         else:
-            print(f'Fail to parse time {time_txt}')
+            logging.error(f'Fail to parse time {time_txt}')
             return datetime.now()
 
     def _mingpao_daily_news_dt(self, time_txt):
@@ -205,7 +206,7 @@ class mingPaoClient:
                             int(t1.group('month')),
                             int(t1.group('day')))
         else:
-            print(f'Fail to parse time {time_txt}')
+            logging.error(f'Fail to parse time {time_txt}')
             now = datetime.now()
             return datetime(now.year, now.month, now.day)
 
@@ -277,7 +278,7 @@ class mingPaoClient:
                 self._mp_dt
             )
         except Exception as e:
-            print(f'Reading {url} with error')
-            print(e)
+            logging.error(f'Reading {url} with error')
+            logging.error(e)
 
             return None

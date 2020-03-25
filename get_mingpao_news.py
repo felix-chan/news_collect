@@ -8,9 +8,15 @@ import time
 from datetime import date, timedelta, datetime
 import hashlib
 import json
+import re
 
 from news_collect.News import News
 from news_collect.mingPaoClient import mingPaoClient
+
+import logging
+logging.basicConfig(level=logging.INFO,
+            format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
+            filename="log/mingpao.log")
 
 daily_url = [
     'pns/%E8%A6%81%E8%81%9E/section/latest/s00001', 
@@ -24,6 +30,8 @@ daily_url = [
 
 # Internal functions
 def transform_url(url):
+    # Replace the ../
+    url = re.sub(r'^\.\.', '', url)
     if url.find('news.mingpao.com') == -1:
         if url[0] == '/':
             sep = ''
@@ -49,7 +57,7 @@ def save_content(news_list):
             with open(f'./mp/directory/{dt}/{md5_string}', 'w') as file:
                 file.write(x.to_json())
         else:
-            print(f'{md5_string} file already exists')
+            logging.warning(f'{md5_string} file already exists')
 
 if __name__ == "__main__":
     mode = 1
@@ -61,20 +69,20 @@ if __name__ == "__main__":
     mp_news = mingPaoClient()
 
     if mode != 2:
-        print('Working on recent news')
+        logging.info('Working on recent news')
         main_page = mp_news.get_article_list()
         save_content(main_page)
         time.sleep(4)
 
         # Other items in main page
         for current_url in daily_url:
-            print(f'Working on {current_url}')
+            logging.info(f'Working on {current_url}')
             temp_content = mp_news.get_daily_news_list(transform_url(current_url))
             save_content(temp_content)
         
             time.sleep(8)
     else:
-        print('Skip directory')
+        logging.warning('Skip directory')
 
     if mode > 0:
         time_list = []
@@ -91,7 +99,7 @@ if __name__ == "__main__":
 
         if len(time_list) > 0:
             for dt in time_list:
-                print(f'Running for {dt}')
+                logging.info(f'Running for {dt}')
                 if os.path.exists(f'./mp/directory/{dt}'):
                     file_list = os.listdir(f'./mp/directory/{dt}')
                     for file_name in file_list:
@@ -105,6 +113,7 @@ if __name__ == "__main__":
                             )
                             
                             if article_detail:
+                                logging.info(f'Saving json {file_name}')
                                 if not os.path.exists(f'./mp/content/{dt}'):
                                     os.makedirs(f'./mp/content/{dt}')
                                 with open(f'./mp/content/{dt}/{file_name}', 'w') as file:
@@ -112,9 +121,9 @@ if __name__ == "__main__":
 
                             time.sleep(15)
                 else:
-                    print(f'Path {dt} does not exists')
+                    logging.warning(f'Path {dt} does not exists')
     else:
-        print('Skip news content')
+        logging.warning('Skip news content')
 
     print('Overall running time: {d}'.format(
         d = (datetime.now() - start_running_time)
